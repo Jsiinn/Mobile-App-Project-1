@@ -94,8 +94,10 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
                         Text('No exercises yet',
                             style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(height: 8),
-                        Text('Tap + to add your first exercise',
-                            style: TextStyle(color: scheme.onSurfaceVariant)),
+                        Text(
+                          'Tap + to add your first exercise',
+                          style: TextStyle(color: scheme.onSurfaceVariant),
+                        ),
                       ],
                     ),
                   )
@@ -112,8 +114,9 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
                             child: Text(
                               ex['name'][0].toUpperCase(),
                               style: TextStyle(
-                                  color: scheme.onPrimaryContainer,
-                                  fontWeight: FontWeight.bold),
+                                color: scheme.onPrimaryContainer,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           title: Text(ex['name']),
@@ -170,13 +173,17 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
-                    labelText: 'Exercise name', border: OutlineInputBorder()),
+                  labelText: 'Exercise name',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 value: selectedMuscle,
                 decoration: const InputDecoration(
-                    labelText: 'Muscle group', border: OutlineInputBorder()),
+                  labelText: 'Muscle group',
+                  border: OutlineInputBorder(),
+                ),
                 items: ['Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Core']
                     .map((m) => DropdownMenuItem(value: m, child: Text(m)))
                     .toList(),
@@ -186,15 +193,17 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
               TextField(
                 controller: equipmentController,
                 decoration: const InputDecoration(
-                    labelText: 'Equipment (optional)',
-                    border: OutlineInputBorder()),
+                  labelText: 'Equipment (optional)',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ],
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel')),
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
             FilledButton(
               onPressed: () async {
                 if (nameController.text.trim().isEmpty) return;
@@ -228,8 +237,9 @@ class _ExerciseLibraryScreenState extends State<ExerciseLibraryScreen> {
         content: const Text('This cannot be undone.'),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
             onPressed: () async {
               await provider.deleteExercise(id);

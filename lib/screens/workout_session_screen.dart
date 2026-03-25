@@ -56,6 +56,60 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
     });
   }
 
+  void _showExercisePicker(BuildContext context, WorkoutProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Select Exercise',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: provider.exercises.isEmpty
+                ? const Center(
+                    child:
+                        Text('No exercises — add some in the Library first.'),
+                  )
+                : ListView.builder(
+                    itemCount: provider.exercises.length,
+                    itemBuilder: (_, i) {
+                      final ex = provider.exercises[i];
+                      return ListTile(
+                        title: Text(ex['name']),
+                        subtitle: Text(ex['muscle_group']),
+                        leading: CircleAvatar(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primaryContainer,
+                          child: Text(
+                            ex['name'][0].toUpperCase(),
+                            style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() => _selectedExercise = ex);
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _logSet(WorkoutProvider provider) async {
     if (_selectedExercise == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -103,8 +157,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
         content: const Text('Your session will be lost if you leave now.'),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Stay')),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Stay'),
+          ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('Leave'),
@@ -141,19 +196,34 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             // Exercise picker
-            DropdownButtonFormField<Map<String, dynamic>>(
-              value: _selectedExercise,
-              decoration: const InputDecoration(
-                labelText: 'Select exercise',
-                border: OutlineInputBorder(),
+            GestureDetector(
+              onTap: () => _showExercisePicker(context, provider),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                decoration: BoxDecoration(
+                  border: Border.all(color: scheme.outline),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _selectedExercise != null
+                            ? _selectedExercise!['name']
+                            : 'Select exercise',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: _selectedExercise != null
+                              ? scheme.onSurface
+                              : scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
+                ),
               ),
-              items: provider.exercises
-                  .map((e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(e['name']),
-                      ))
-                  .toList(),
-              onChanged: (val) => setState(() => _selectedExercise = val),
             ),
             const SizedBox(height: 16),
 
@@ -184,6 +254,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
               ],
             ),
             const SizedBox(height: 12),
+
             FilledButton.icon(
               onPressed: () => _logSet(provider),
               icon: const Icon(Icons.add),
@@ -204,9 +275,10 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                       Text(
                         'Rest: ${_restSeconds}s',
                         style: TextStyle(
-                            color: scheme.onPrimaryContainer,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18),
+                          color: scheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                       const Spacer(),
                       TextButton(
@@ -221,14 +293,15 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
 
             // Logged sets
             if (provider.currentSets.isNotEmpty) ...[
-              Text('Logged Sets',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                'Logged Sets',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
-              ...provider.currentSets.asMap().entries.map((e) {
-                final s = e.value;
+              ...provider.currentSets.map((s) {
                 final exercise = provider.exercises.firstWhere(
                   (ex) => ex['id'] == s['exercise_id'],
                   orElse: () => {'name': 'Unknown'},

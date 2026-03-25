@@ -64,7 +64,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // Quests table
     await db.execute('''
       CREATE TABLE quests (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -76,7 +75,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // Milestones table
     await db.execute('''
       CREATE TABLE milestones (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,7 +84,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // Personal records table
     await db.execute('''
       CREATE TABLE personal_records (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -99,7 +96,6 @@ class DatabaseHelper {
     ''');
   }
 
-  // ── EXERCISES ──────────────────────────────────────────
 
   Future<int> insertExercise(Map<String, dynamic> exercise) async {
     final db = await database;
@@ -135,7 +131,6 @@ class DatabaseHelper {
     return await db.delete('exercises', where: 'id = ?', whereArgs: [id]);
   }
 
-  // ── WORKOUTS ───────────────────────────────────────────
 
   Future<int> insertWorkout(Map<String, dynamic> workout) async {
     final db = await database;
@@ -152,7 +147,6 @@ class DatabaseHelper {
     return await db.query('workouts', orderBy: 'date DESC', limit: limit);
   }
 
-  // ── WORKOUT SETS ───────────────────────────────────────
 
   Future<int> insertWorkoutSet(Map<String, dynamic> workoutSet) async {
     final db = await database;
@@ -173,7 +167,6 @@ class DatabaseHelper {
     return await db.delete('workout_sets', where: 'id = ?', whereArgs: [id]);
   }
 
-  // ── PERSONAL RECORDS ───────────────────────────────────
 
   Future<int> insertPersonalRecord(Map<String, dynamic> record) async {
     final db = await database;
@@ -195,7 +188,6 @@ class DatabaseHelper {
     );
   }
 
-  // ── QUESTS ─────────────────────────────────────────────
 
   Future<int> insertQuest(Map<String, dynamic> quest) async {
     final db = await database;
@@ -217,7 +209,6 @@ class DatabaseHelper {
     );
   }
 
-  // ── CLOSE ──────────────────────────────────────────────
 
   Future close() async {
     final db = await database;
